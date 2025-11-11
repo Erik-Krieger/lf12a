@@ -1,37 +1,24 @@
 services:
   web-server:
-    # Das Image des Containers
     image: "web"
-    # Wenn der Container abstürzen sollte, wird er neu gestartet.
     restart: "unless-stopped"
-
-    # Port mappings
     ports:
       # Gibt port für alle anderen Geräte im Netzwerk frei.
       - "8001:8000"
-
       # Nur auf dem lokalen system erreichbar.
       - "127.0.0.1:8000:8000"
-
-    # Datei Pfade mappen.
     volumes:
       - "./container_data:/usr/local/app/data"
-
-    # Netzwerke auf die der Container Zugriff hat
     networks:
       - backend
-
     # Starte nachdem der cache läuft
     depends_on:
       cache:
         condition: service_started
 
   cache:
-    # Das Image des Containers
     image: "redis:alpine"
-    # Wenn der Container abstürzen sollte, wird er neu gestartet.
     restart: "unless-stopped"
-    # Netzwerke auf die der Container Zugriff hat
     networks:
       - backend
 
