@@ -7,13 +7,13 @@ services:
       - "8001:8000"
       # Nur auf dem lokalen system erreichbar.
       - "127.0.0.1:8000:8000"
-    volumes:
-      - "./container_data:/usr/local/app/data"
     networks:
       - backend
     # Starte nachdem der cache läuft
     depends_on:
       cache:
+        condition: service_started
+      db:
         condition: service_started
 
   cache:
@@ -21,6 +21,18 @@ services:
     restart: "unless-stopped"
     networks:
       - backend
+    depends_on:
+      db:
+        condition: service_started
+
+  db:
+    image: "postgres:alpine"
+    restart: "unless-stopped"
+    shm_size: 128mb
+    networks:
+      - backend
+    environment:
+      POSTGRES_PASSWORD: "password"
 
 # Netzwerke müssen deklariert werden
 networks:
